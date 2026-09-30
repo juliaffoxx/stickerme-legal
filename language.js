@@ -9,7 +9,12 @@
     if (typeof value !== 'string') return undefined;
     const tag = value.replaceAll('_', '-').toLowerCase();
     if (exact.has(tag)) return exact.get(tag);
-    if (tag.startsWith('zh-')) return /(?:hant|tw|hk|mo)(?:-|$)/.test(tag) ? 'zh-Hant' : 'zh-Hans';
+    if (tag.startsWith('zh-')) {
+      const parts = tag.split('-');
+      if (parts.includes('hant')) return 'zh-Hant';
+      if (parts.includes('hans')) return 'zh-Hans';
+      return parts.some(part => ['tw','hk','mo'].includes(part)) ? 'zh-Hant' : 'zh-Hans';
+    }
     if (tag === 'zh') return 'zh-Hans';
     if (tag.startsWith('en-au') || tag.startsWith('en-nz')) return 'en-AU';
     if (tag.startsWith('en-ca')) return 'en-CA';
